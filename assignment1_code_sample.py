@@ -6,6 +6,13 @@ from urllib.parse import urlparse
 from urllib.request import urlopen, Request
 from email.mime.text import MIMEText
 
+import re
+import smtplib
+from email.mime.text import MIMEText
+from urllib.parse import urlparse
+
+import pymysql
+import requests
 
 # Secure DB config using environment variables
 db_config = {
@@ -22,6 +29,9 @@ def get_user_input():
         raise ValueError(
             "Input is Invalid! Only alphanumeric characters and spaces are allowed."
         )
+
+        raise ValueError("Input is Invalid! Only alphanumeric characters and spaces are allowed.")
+
     return user_input
 
 
@@ -48,9 +58,15 @@ def get_data():
             raise ValueError("Unsupported URL scheme")
 
         headers = {"User-Agent": "SecureClient/1.0"}
+
         req = Request(url, headers=headers)
         data = urlopen(req, timeout=5).read().decode()
         return data
+
+        response = requests.get(url, headers=headers, timeout=5)
+        response.raise_for_status()
+        return response.text
+
     except Exception as e:
         print(f"Error fetching data: {e}")
         return None

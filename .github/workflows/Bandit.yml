@@ -1,0 +1,28 @@
+name: Bandit Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  bandit-scan:
+    runs-on: ubuntu-latest
+    name: Run Bandit security scan
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit
+        run: bandit -r . -ll -iii
