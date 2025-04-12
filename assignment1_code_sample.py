@@ -1,10 +1,11 @@
 import os
-import pymysql
 import re
 import smtplib
-from urllib.parse import urlparse
-from urllib.request import urlopen, Request
 from email.mime.text import MIMEText
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
+
+import pymysql
 import requests
 
 # Secure DB config using environment variables
@@ -19,8 +20,9 @@ def get_user_input():
     """Prompt the user and validate input to prevent injection."""
     user_input = input("Enter your name: ")
     if not re.match(r"^[a-zA-Z0-9 ]+$", user_input):
-        raise ValueError("Input is Invalid! Only alphanumeric characters and spaces are allowed.")
-
+        raise ValueError(
+            "Input is Invalid! Only alphanumeric characters and spaces are allowed."
+        )
     return user_input
 
 
@@ -43,12 +45,15 @@ def get_data():
     url = "https://secure-api.com/get-data"
     try:
         parsed_url = urlparse(url)
-        if parsed_url.scheme not in ["http", "https"]:
-            raise ValueError("Unsupported URL scheme")
+
+        # Ensure only HTTPS is used
+        if parsed_url.scheme not in ["https"]:
+            raise ValueError("Only HTTPS URLs are allowed")
 
         headers = {"User-Agent": "SecureClient/1.0"}
-
         req = Request(url, headers=headers)
+
+        # Using urlopen safely after scheme check
         data = urlopen(req, timeout=5).read().decode()
         return data
 
