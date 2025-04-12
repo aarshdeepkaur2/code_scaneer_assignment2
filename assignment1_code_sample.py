@@ -1,12 +1,10 @@
 import os
+import pymysql
 import re
 import smtplib
-from email.mime.text import MIMEText
 from urllib.parse import urlparse
-from urllib.request import Request, urlopen
-
-import pymysql
-import requests
+import requests  # Using requests instead of urlopen
+from email.mime.text import MIMEText
 
 # Secure DB config using environment variables
 db_config = {
@@ -47,15 +45,15 @@ def get_data():
         parsed_url = urlparse(url)
 
         # Ensure only HTTPS is used
-        if parsed_url.scheme not in ["https"]:
+        if parsed_url.scheme != "https":
             raise ValueError("Only HTTPS URLs are allowed")
 
         headers = {"User-Agent": "SecureClient/1.0"}
-        req = Request(url, headers=headers)
 
-        # Using urlopen safely after scheme check
-        data = urlopen(req, timeout=5).read().decode()
-        return data
+        # Using requests for a more secure and flexible method to fetch data
+        response = requests.get(url, headers=headers, timeout=5)
+        response.raise_for_status()  # Raises an exception for 4xx/5xx HTTP errors
+        return response.text
 
     except Exception as e:
         print(f"Error fetching data: {e}")
