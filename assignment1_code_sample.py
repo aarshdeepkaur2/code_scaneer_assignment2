@@ -1,12 +1,10 @@
 import os
 import re
 import smtplib
-from email.mime.text import MIMEText
-from urllib.parse import urlparse
-
 import pymysql
 import requests
-
+from email.mime.text import MIMEText
+from urllib.parse import urlparse
 
 # Secure DB config using environment variables
 db_config = {
@@ -15,19 +13,13 @@ db_config = {
     "password": os.getenv("DB_PASSWORD", "secret123"),
 }
 
-
 def get_user_input():
-    """Prompt the user and validate input to prevent injection."""
     user_input = input("Enter your name: ")
     if not re.match(r"^[a-zA-Z0-9 ]+$", user_input):
-        raise ValueError(
-            "Input is invalid! Only alphanumeric characters and spaces are allowed."
-        )
+        raise ValueError("Input is invalid! Only alphanumeric characters and spaces are allowed.")
     return user_input
 
-
 def send_email(to, subject, body):
-    """Send an email using secure SMTP."""
     msg = MIMEText(body)
     msg["Subject"] = subject
     msg["From"] = "email@example.com"
@@ -39,28 +31,22 @@ def send_email(to, subject, body):
     except Exception as e:
         print(f"Error sending email: {e}")
 
-
 def get_data():
-    """Fetch data from a secure API endpoint using HTTPS."""
     url = "https://secure-api.com/get-data"
     parsed_url = urlparse(url)
 
     if parsed_url.scheme != "https":
         raise ValueError("Only HTTPS URLs are allowed")
 
-    headers = {"User-Agent": "SecureClient/1.0"}
-
     try:
-        response = requests.get(url, headers=headers, timeout=5)
+        response = requests.get(url, headers={"User-Agent": "SecureClient/1.0"}, timeout=5)
         response.raise_for_status()
         return response.text
     except requests.RequestException as e:
         print(f"Error fetching data: {e}")
         return None
 
-
 def save_to_db(data):
-    """Save data to the database using parameterized queries."""
     query = "INSERT INTO mytable (column1, column2) VALUES (%s, %s)"
     connection = None
 
@@ -75,9 +61,7 @@ def save_to_db(data):
         if connection and connection.open:
             connection.close()
 
-
 def main():
-    """Main program flow."""
     try:
         user_input = get_user_input()
         data = get_data()
@@ -86,7 +70,6 @@ def main():
         send_email("admin@example.com", "User Input", user_input)
     except Exception as e:
         print(f"An error occurred: {e}")
-
 
 if __name__ == "__main__":
     main()
