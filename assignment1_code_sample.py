@@ -32,6 +32,7 @@ def send_email(to, subject, body):
         print(f"Error sending email: {e}")
 
 def get_data():
+    "To get the data from user"
     url = "https://secure-api.com/get-data"
     parsed_url = urlparse(url)
 
